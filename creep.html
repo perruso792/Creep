@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiohead - Creep | Letra Sincronizada Dinámica</title>
+    <style>
+        /* ================================== */
+        /* CSS: ESTILO PRINCIPAL */
+        /* ================================== */
+        body {
+            background-color: #121212;
+            color: #FFFFFF;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            padding: 40px 20px 100px;
+            box-sizing: border-box;
+        }
+
+        /* Información de la Canción */
+        .song-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .album-cover {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            margin-right: 20px;
+            background-size: cover;
+            background-position: center;
+            background-image: url('https://www.dropbox.com/scl/fi/p1sqehyv8z6yphcfb680d/portada-creep.png?rlkey=uwhsmk3kswdgz7cpuasweganv&st=2nu61n1v&dl=0');
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-info {
+            text-align: left;
+        }
+
+        .song-title {
+            font-size: 2.5em;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .artist-name {
+            font-size: 1.2em;
+            color: #B3B3B3;
+            margin-top: 5px;
+        }
+
+        /* Letras (Lyrics) */
+        .lyrics {
+            line-height: 1.6;
+        }
+
+        .lyric-line {
+            font-size: 2.2em;
+            color: #707070;
+            margin: 30px 0;
+            transition: color 0.4s ease, font-size 0.4s ease;
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .lyric-line.active {
+            font-weight: 700;
+            font-size: 2.8em; 
+            background-image: linear-gradient(to right, white, white);
+            background-clip: text;
+            -webkit-background-clip: text; 
+            color: transparent;
+            background-size: 0% 100%;
+            background-repeat: no-repeat;
+            transition: background-size 2s ease-out, font-size 0.4s ease; 
+        }
+
+        .lyric-line.active.visible {
+            background-size: 100% 100%;
+        }
+
+        .lyric-line.hit {
+            color: #1DB954;
+            background-image: none;
+            background-clip: unset;
+            -webkit-background-clip: unset;
+            transition: color 0.1s ease-in;
+        }
+
+        /* ================================== */
+        /* CSS: ANIMACIÓN DE TEMBLOR (SHAKE) */
+        /* ================================== */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shaking {
+            animation: shake 0.8s;
+            animation-iteration-count: 100; /* 100 repeticiones * 0.8s = 10 segundos */
+            position: relative; 
+        }
+
+        /* Reproductor de Audio */
+        #audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #282828;
+            padding: 10px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        /* ================================== */
+        /* CSS: INTRO (OBRA DE ANGEL MARTELL) */
+        /* ================================== */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Fondo negro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 1s ease-out; /* Transición suave de salida */
+            z-index: 9999;
+            pointer-events: all; /* Permite que el overlay bloquee el clic */
+        }
+
+        #intro-overlay.hidden {
+            opacity: 0;
+            pointer-events: none; /* Desactiva la interacción una vez oculto */
+        }
+
+        #intro-text {
+            color: #FFFFFF;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <div id="intro-text">
+            Obra de Angel Martell 🗿
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="song-info">
+            <div class="album-cover"></div>
+            <div class="text-info">
+                <div class="artist-name">Radiohead</div>
+                <h1 class="song-title">Creep</h1>
+            </div>
+        </div>
+        
+        <div class="lyrics" id="lyrics-container">
+            <p id="line-0" class="lyric-line">When you were here before,</p>
+            <p id="line-1" class="lyric-line">Couldn't look you in the eye.</p>
+            <p id="line-2" class="lyric-line">You're just like an angel,</p>
+            <p id="line-3" class="lyric-line">Your skin makes me cry.</p>
+            
+            <p id="line-4" class="lyric-line">You float like a feather,</p>
+            <p id="line-5" class="lyric-line">In a beautiful world.</p>
+            <p id="line-6" class="lyric-line">I wish I was special,</p>
+            <p id="line-7" class="lyric-line">You're so fucking special.</p>
+
+            <p id="line-8" class="lyric-line">But I'm a creep,</p>
+            <p id="line-9" class="lyric-line">I'm a weirdo.</p>
+            <p id="line-10" class="lyric-line">What the hell am I doing here?</p>
+            <p id="line-11" class="lyric-line">I don't belong here.</p>
+
+            <p id="line-12" class="lyric-line">I don't care if it hurts,</p>
+            <p id="line-13" class="lyric-line">I wanna have control.</p>
+            <p id="line-14" class="lyric-line">I want a perfect body,
+            <p id="line-15" class="lyric-line">I want a perfect soul.</p>
+            
+            <p id="line-16" class="lyric-line">I want you to notice,</p>
+            <p id="line-17" class="lyric-line">When I'm not around.</p>
+            <p id="line-18" class="lyric-line">You're so fucking special,</p>
+            <p id="line-19" class="lyric-line">I wish I was special.</p>
+
+            <p id="line-20" class="lyric-line">But I'm a creep,</p>
+            <p id="line-21" class="lyric-line">I'm a weirdo.</p>
+            <p id="line-22" class="lyric-line">What the hell am I doing here?</p>
+            <p id="line-23" class="lyric-line">I don't belong here.</p>
+            
+            <p id="line-24" class="lyric-line">Oh, oh.</p>
+            
+            <p id="line-25" class="lyric-line">She's running out the door,</p>
+            <p id="line-26" class="lyric-line">She's running out,</p>
+            <p id="line-27" class="lyric-line">She run, run, run, run,</p>
+            <p id="line-28" class="lyric-line">Run.</p>
+            
+            <p id="line-29" class="lyric-line">Whatever makes you happy,</p>
+            <p id="line-30" class="lyric-line">Whatever you want.</p>
+            <p id="line-31" class="lyric-line">You're so fucking special,</p>
+            <p id="line-32" class="lyric-line">I wish I was special.</p>
+            
+            <p id="line-33" class="lyric-line">But I'm a creep,</p>
+            <p id="line-34" class="lyric-line">I'm a weirdo.</p>
+            <p id="line-35" class="lyric-line">What the hell am I doing here?</p>
+            <p id="line-36" class="lyric-line">I don't belong here.</p>
+            <p id="line-37" class="lyric-line">I don't belong here.</p>
+        </div>
+    </div>
+    
+    <script id="lyrics-data" type="application/json">
+        [
+            {"time": 19000, "line": 0},
+            {"time": 23900, "line": 1},
+            {"time": 28600, "line": 2},
+            {"time": 34000, "line": 3},
+            {"time": 38240, "line": 4},
+            {"time": 44500, "line": 5},
+            {"time": 50030, "line": 6},
+            {"time": 54700, "line": 7},
+            {"time": 60000, "line": 8, "hit": true},
+            {"time": 64700, "line": 9, "hit": true},
+            {"time": 70000, "line": 10},
+            {"time": 76000, "line": 11},
+            {"time": 81510, "line": 12},
+            {"time": 86300, "line": 13},
+            {"time": 91101, "line": 14},
+            {"time": 97010, "line": 15},
+            {"time": 102000, "line": 16},
+            {"time": 107000, "line": 17},
+            {"time": 112000, "line": 18},
+            {"time": 117500, "line": 19},
+            {"time": 123000, "line": 20, "hit": true},
+            {"time": 128000, "line": 21, "hit": true},
+            {"time": 133000, "line": 22},
+            {"time": 139200, "line": 23},
+            {"time": 142500, "line": 24},
+            {"time": 145500, "line": 25},
+            {"time": 155500, "line": 26},
+            {"time": 160500, "line": 27},
+            {"time": 176000, "line": 28},
+            {"time": 185000, "line": 29},
+            {"time": 190000, "line": 30},
+            {"time": 195700, "line": 31},
+            {"time": 200100, "line": 32},
+            {"time": 205500, "line": 33, "hit": true},
+            {"time": 211000, "line": 34, "hit": true},
+            {"time": 215800, "line": 35},
+            {"time": 221300, "line": 36},
+            {"time": 226800, "line": 37}
+        ]
+    </script>
+
+
+    <div id="audio-player">
+        <audio id="creep-audio" controls>
+            <source src="https://www.dropbox.com/scl/fi/5spq2vow47f0amop9k9fm/Radiohead-Creep-Subtitulada-en-Espa-ol-Lyrics.mp3?rlkey=kcod1e6srukqt0rpme9lv0ds6&st=nl5o9wou&dl=1" type="audio/mp3">
+            Tu navegador no soporta el elemento de audio.
+        </audio>
+        <p style="font-size: 0.8em; color: #b3b3b3;">
+            Presiona 'Play' en el reproductor de audio para iniciar 🗿🗿😮‍💨🤙🏻
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lyricsDataElement = document.getElementById('lyrics-data');
+            
+            if (!lyricsDataElement) {
+                console.error("Error: Elemento de datos 'lyrics-data' no encontrado.");
+                return; 
+            }
+            const lyricsTiming = JSON.parse(lyricsDataElement.textContent);
+            
+            let currentLineIndex = -1;
+            const audio = document.getElementById('creep-audio');
+            const lyricLines = document.querySelectorAll('.lyric-line');
+            const body = document.body;
+            const introOverlay = document.getElementById('intro-overlay'); // Referencia al overlay
+
+            // Función para ocultar el overlay de introducción después de 4 segundos
+            function hideIntroOverlay() {
+                // La clase 'hidden' activa la transición de opacidad en CSS
+                introOverlay.classList.add('hidden');
+                
+                // Opcional: remover completamente el elemento del DOM después de la transición
+                // para asegurar que no haya problemas de renderizado (se ejecuta después de 1.1s)
+                setTimeout(() => {
+                    introOverlay.style.display = 'none';
+                }, 1100); 
+            }
+
+            // Inicia la cuenta regresiva para ocultar el overlay
+            setTimeout(hideIntroOverlay, 4000); // <-- Ocultar después de 4 segundos (4000ms)
+
+            function startShake() {
+                if (!body.classList.contains('shaking')) {
+                    body.classList.add('shaking');
+                    setTimeout(() => {
+                        body.classList.remove('shaking');
+                    }, 10000); // 10000 MS (10 segundos)
+                }
+            }
+
+            function updateLyrics() {
+                const currentTime = audio.currentTime * 1000; 
+                let nextLineIndex = currentLineIndex;
+
+                while (nextLineIndex + 1 < lyricsTiming.length && currentTime >= lyricsTiming[nextLineIndex + 1].time) {
+                    nextLineIndex++;
+                }
+                while (nextLineIndex >= 0 && currentTime < lyricsTiming[nextLineIndex].time) {
+                    nextLineIndex--;
+                }
+                
+                if (nextLineIndex === -1 && currentLineIndex !== -1) {
+                    lyricLines[lyricsTiming[currentLineIndex].line].classList.remove('active', 'hit', 'visible');
+                    currentLineIndex = -1;
+                }
+
+                if (nextLineIndex !== currentLineIndex) {
+                    
+                    if (currentLineIndex !== -1) {
+                        const prevSyncPoint = lyricsTiming[currentLineIndex];
+                        lyricLines[prevSyncPoint.line].classList.remove('active', 'hit', 'visible');
+                    }
+
+                    currentLineIndex = nextLineIndex;
+                    
+                    if (currentLineIndex !== -1) {
+                        const syncPoint = lyricsTiming[currentLineIndex];
+                        const currentLineElement = lyricLines[syncPoint.line];
+
+                        currentLineElement.classList.add('active'); 
+                        
+                        setTimeout(() => {
+                            currentLineElement.classList.add('visible'); 
+                        }, 40); 
+
+
+                        if (syncPoint.hit) {
+                            currentLineElement.classList.add('hit'); 
+                            
+                            const linesToShake = [8, 9, 20, 21, 33, 34];
+                            if (linesToShake.includes(syncPoint.line)) {
+                                startShake();
+                            }
+                        }
+
+                        requestAnimationFrame(() => {
+                            currentLineElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        });
+                    }
+                }
+            }
+
+            audio.addEventListener('timeupdate', updateLyrics);
+            audio.addEventListener('play', updateLyrics);
+            audio.addEventListener('seeked', updateLyrics); 
+            
+            if (lyricsTiming.length > 0) {
+                lyricLines[lyricsTiming[0].line].scrollIntoView({
+                    block: 'center'
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
